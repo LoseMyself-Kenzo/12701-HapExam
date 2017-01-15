@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hbi.core.Exam.mapper.DemoMapper">
+    <update id="myUpdate" parameterType="hbi.core.Exam.dto.Demo">
+        UPDATE hbi_demo
+        SET tel = #{tel}, name=#{name}, object_version_number = object_version_number+1
+        WHERE id=#{id} AND object_version_number=#{objectVersionNumber}
+    </update>
+</mapper>

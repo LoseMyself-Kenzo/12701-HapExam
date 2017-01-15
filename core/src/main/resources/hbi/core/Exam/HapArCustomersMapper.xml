@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hbi.core.Exam.mapper.HapArCustomersMapper">
+    <select id="lovSelect" resultType="hbi.core.Exam.dto.Customer">
+        SELECT customer_id,customer_name
+        FROM hap_ar_customers
+    </select>
+
+    <select id="getNameById" resultType="String">
+        SELECT customer_name
+        FROM hap_ar_customers
+        WHERE customer_id=${_parameter}
+    </select>
+</mapper>

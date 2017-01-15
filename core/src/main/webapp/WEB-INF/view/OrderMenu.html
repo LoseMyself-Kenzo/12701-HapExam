@@ -1,0 +1,147 @@
+<#include "./include/header.html">
+    <body onload="reload();">
+    <form>
+        <div style="margin-top: 25px;margin-left: 15%">
+            <div>
+                公司名称&nbsp;<input name="companyId" id="companylov"/>&nbsp;&nbsp;
+                客户名称&nbsp;<input name="customerId" id="customerlov">&nbsp;&nbsp;
+                <script>
+                    $("#companylov").kendoLov($.extend(${lovProvider.getLov(base.contextPath, base.locale, "emp_lov")}, {}
+                    ));
+//                    kendo.bind($('#companylov'), viewModel);
+                </script>
+                <script>
+                    $("#customerlov").kendoLov($.extend(${lovProvider.getLov(base.contextPath, base.locale, "customer_lov")}, {}
+                    ));
+//                    kendo.bind($('#customerlov'), viewModel);
+                </script>
+                销售订单号&nbsp;<input type="text" name="orderNumber" id="orderNumber">
+            </div>
+            <div style="margin-top: 5px">
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;物料&nbsp;<input id="inventorylov">&nbsp;&nbsp;
+                <script>
+                    $("#inventorylov").kendoLov($.extend(${lovProvider.getLov(base.contextPath, base.locale, "inventory_lov")}, {}
+                    ));
+//                    kendo.bind($('#inventorylov'), viewModel);
+                </script>
+                订单状态
+                <select id="orderStatus" style="width: 135px;">
+                    <option value=""></option>
+                    <option value="NEW">新建</option>
+                    <option value="SUBMITED">已提交</option>
+                    <option value="APPROVED">已审批</option>
+                    <option value="REJECTED">已拒绝</option>
+                </select>
+            </div>
+            <div style="margin-top: 5px">
+                <button type="button" onclick="reload();">
+                    查询
+                </button>
+                &nbsp;
+                <button type="reset">
+                    重置
+                </button>
+                &nbsp;
+                <button type="button">
+                    导出Excel
+                </button>
+                &nbsp;
+            </div>
+        </div>
+    </form>
+    <!--<div>-->
+    <!--<span class="btn btn-primary" style="float:left;margin-right:5px;"-->
+          <!--data-bind="click:exportExcelFunction"><@spring.message "hap.exportexcel"/></span>-->
+    <!--</div>-->
+
+    <div id="grid" style="margin: 20px;"></div>
+    <script>
+        function toAll() {
+            location.href = "OrderAll.html";
+        }
+
+//      <a href='order/select?headerId=#= headerId #'>
+        function reload() {
+
+//            var localHref = location.href;
+            var SURL ="${base.contextPath}/demo?companyId="+$("#companylov").val()+"&customerId="+$("#customerlov").val()+"&orderNumber="+$("#orderNumber").val();
+
+            var grid = $("#grid").kendoGrid({
+                toolbar: [{
+                    template: '<span class="btn btn-primary" onclick="toAll()">新增</span>'
+                }],
+                columns: [
+                    {
+                        field: "orderNumber", title: "销售订单号",
+                        template: "<a href='${base.contextPath}/OrderAll.html?headerId=#= headerId #'>#= orderNumber #</a>",
+//                    template: "<a onclick='editOrder(#= headerId #)'  href='javascript:void(0)'>#= orderNumber #</a>" ,
+//                    attributes: {style: "text-align:center"}
+                    },
+                    {field: "companyName", title: "公司名称"},
+                    {field: "customerName", title: "客户名称"},
+                    {field: "orderDate", title: "订单日期"},
+                    {field: "orderStatus", title: "订单状态"},
+                    {field: "companyId", title: "订单金额"},
+                ],
+                dataSource: {
+                    transport: {
+//                    read:{
+//                        url: "${base.contextPath}/demo",
+//                        type: "GET",
+//                        dataType: "json"
+//                    },
+                        read: function (options) {
+                            console.log(arguments);
+                            $.ajax({
+//                                url: "${base.contextPath}/demo",
+                                url: SURL ,
+                                type: "GET",
+                                dataType: "json",
+                                data: options.data,
+                                success: function (data) {
+                                    // 扩展点
+                                    options.success(data);
+                                }
+                            });
+                        },
+
+                        parameterMap: function (options, type) {
+                            console.log(arguments);
+                            if (type == "read") {
+                                return options;
+                            } else {
+                                return JSON.stringify(options);
+                            }
+                        }
+                    },
+                    schema: {
+                        data: "rows",
+                        total: "total",
+                        model: {
+                            id: "id",
+                            fields: {
+                                orderNumber: {editable: false},
+                                companyName: {editable: false},
+                                customerName: {editable: false},
+                                orderDate: {editable: false},
+                                orderStatus: {editable: false},
+                                companyId: {editable: false},
+                            }
+                        }
+                    },
+                    serverPaging: true,
+                    pageSize: 5
+                },
+                rownumber: true,
+                selectable: "multiple rowbox",
+                editable: true,
+                pageable: {
+                    pageSizes: ['All', 5, 10, 20, 50],
+                    refresh: true,
+                    buttonCount: 5
+                }
+            });
+        }
+    </script>
+    </body>
+    </html>

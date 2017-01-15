@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+        <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hbi.core.Exam.mapper.OrderLineMapper">
+        <delete id="myDelete" parameterType="Long">
+                delete from hap_om_order_lines where header_id = ${_parameter}
+        </delete>
+</mapper>

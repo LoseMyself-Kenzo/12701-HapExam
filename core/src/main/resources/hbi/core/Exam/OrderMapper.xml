@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hbi.core.Exam.mapper.OrderMapper">
+    <update id="myUpdate" parameterType="hbi.core.Exam.dto.Order">
+        UPDATE hap_om_order_headers
+        SET order_number = #{orderNumber}, company_id=#{companyId}, customer_id =#{customerId},order_date=#{orderDate},order_status=#{orderStatus},
+        WHERE header_id=#{headerId}
+    </update>
+    <!--<select id="mySelect" resultType="hbi.core.Exam.dto.Order">-->
+        <!--SELECT a.order_number order_number , a.company_id company_id, a.customer_id customer_id, a.order_date order_date, a.order_status order_status, com.company_name company_name-->
+        <!--FROM hap_om_order_headers a, hap_org_companys com, hap_ar_customers cus-->
+        <!--WHERE a.company_id = com.company_id or  a.customer_id = cus.customer_id-->
+        <!--GROUP BY order_number-->
+    <!--</select>-->
+</mapper>

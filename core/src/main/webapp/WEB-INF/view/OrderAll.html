@@ -1,0 +1,268 @@
+<#include "include/header.html">
+    <body style="height: 700px">
+    <script type="application/javascript">
+        window.onload = function () {
+            var date = new Date();
+            var month = date.getMonth() + 1;
+            var strDate = date.getDate();
+            if (month >= 1 && month <= 9) {
+                month = "0" + month;
+            }
+            if (strDate >= 0 && strDate <= 9) {
+                strDate = "0" + strDate;
+            }
+            var currentdate = date.getFullYear() + "/" + month + "/" + strDate;
+            $('#datePicker').val(currentdate);
+
+            function to() {
+                var getval = document.getElementById("cc").value;
+                document.location.href("b.html?cc=" + getval);
+            }
+        };
+    </script>
+    <form>
+        <div style="margin-top: 25px;margin-left: 15%">
+            <div>
+                订单编号&nbsp;<input type="text" style="width: 150px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                公司名称&nbsp;<input id="companylov"/>&nbsp;&nbsp;&nbsp;
+                客户名称&nbsp;<input id="customerlov"/>
+                <script>
+                    $("#companylov").kendoLov($.extend(${lovProvider.getLov(base.contextPath, base.locale, "emp_lov")},{}
+                    ));
+//                    kendo.bind($('#companylov'), viewModel);
+                </script>
+                <script>
+                    $("#customerlov").kendoLov($.extend(${lovProvider.getLov(base.contextPath, base.locale, "customer_lov")},{}
+                    ));
+//                    kendo.bind($('#customerlov'), viewModel);
+                </script>
+            </div>
+            <div style="margin-top: 5px">
+                订单日期&nbsp;<input id="datePicker">&nbsp;&nbsp;
+                <script type="text/javascript">
+                    $(function () {
+                        $("#datePicker").kendoDatePicker();
+                    });
+                </script>
+                订单总金额&nbsp;<input type="text" readonly="readonly" value="" style="width: 150px">&nbsp;&nbsp;&nbsp;
+                订单状态&nbsp;<input text="text" readonly="readonly" style="width: 148px" value="新建">
+            </div>
+            <div style="margin-top: 5px">
+                <button>保存</button>
+                &nbsp;
+                <button>提交</button>
+                &nbsp;
+                <button>审批</button>
+                &nbsp;
+                <button>拒绝</button>
+                &nbsp;
+                <button>整单删除</button>
+                &nbsp;
+                <button>单据打印</button>
+                &nbsp;
+                <button type="button" onclick="javascript:location.href='OrderMenu.html'">返回</button>
+            </div>
+        </div>
+    </form>
+
+    <div id="tabstrip" style="height:100%">
+        <ul>
+            <li class="k-state-active">
+                主要
+            </li>
+            <li>
+                其他
+            </li>
+        </ul>
+        <div>
+            <div id="grid1">
+            </div>
+        </div>
+        <div>
+            <div id="grid2">
+
+            </div>
+        </div>
+    </div>
+    <script>
+        var tabstrip = $("#tabstrip").kendoTabStrip({
+            height: '100%',
+            animation: false
+        }).data("kendoTabStrip");
+    </script>
+
+    <script>
+
+        //跳转指定查询-------------------------------------------------------
+        var localHref=location.href;
+        var SURL ="${base.contextPath}/order/select?headerId=";
+        if(localHref.indexOf("=") != -1){
+            SURL = SURL + localHref.substring(localHref.indexOf("=") + 1);
+        }
+        //删除指定信息--------------------------------------------------
+
+        $("#grid1").kendoGrid({
+            toolbar: [{
+                name: "create",
+                template: '<span class="btn btn-primary k-grid-add">#=text#</span>'
+            }, {
+                name: "save",
+                template: '<span class="btn btn-success k-grid-save-changes">#=text#</span>'
+            }, {
+                name: "delete",
+                template: '<span id="delete" class="btn btn-danger">删除</span>'
+            }],
+            columns: [
+                {field: "orderLines.lineId", title: "行号"},
+                {field: "itemCode", title: "物料编码"},
+                {field: "itemDescription", title: "物料描述"},
+                {field: "itemUom", title: "产品单位"},
+                {field: "orderLines.orderdQuantity", title: "产品数量"},
+                {field: "orderLines.unitSellingPrice", title: "销售单价"},
+                {field: "money", title: "金额"},
+                {field: "", title: "备注"}
+            ],
+            dataSource: {
+                transport: {
+                    read: {
+                        url: SURL ,
+                        type: "GET",
+                        dataType: "json"
+                    },
+                    create: {
+                        url: "${base.contextPath}/demo",
+                        contentType: "application/json",
+                        dataType: "json",
+                        type: "POST"
+                    },
+                    update: {
+                        url: "${base.contextPath}/demo",
+                        contentType: "application/json",
+                        dataType: "json",
+                        type: "PUT"
+                    },
+                    destroy: {
+                        url: "${base.contextPath}/demo",
+                        contentType: "application/json",
+                        dataType: "json",
+                        type: "DELETE"
+                    },
+                    parameterMap: function (options, type) {
+                        console.log(arguments);
+                        if (type == "read") {
+                            return options;
+                        } else {
+                            return JSON.stringify(options);
+                        }
+                    }
+                },
+                schema: {
+                    data: "rows",
+                    total: "total",
+                    model: {
+                        id: "id",
+                        fields: {
+                            "orderLines.lineId":{editable: false},
+                            itemCode:{validation: {required: true}},
+                            itemDescription: {editable: false},
+                            itemUom: {editable: false},
+                            "orderLines.orderdQuantity": {validation: {required: true}},
+                            "orderLines.unitSellingPrice": {validation: {required: true}},
+                            money:{editable: false},
+                        }
+                    }
+                },
+                serverPaging: true,
+                pageSize: 5
+            },
+            rownumber: true,
+            selectable: "multiple rowbox",
+            editable: true,
+            pageable: {
+                pageSizes: ['All', 5, 10, 20, 50],
+                refresh: true,
+                buttonCount: 5
+            }
+        });
+        $("#delete").click(function () {
+            Hap.deleteGridSelection({grid: $('#grid1')});
+        });
+    </script>
+
+    <script>
+        $("#grid2").kendoGrid({
+            toolbar: [{
+                name: "create",
+                template: '<span class="btn btn-primary k-grid-add">#=text#</span>'
+            }, {
+                name: "save",
+                template: '<span class="btn btn-success k-grid-save-changes">#=text#</span>'
+            }, {
+                template: '<span id="delete" class="btn btn-danger">删除</span>'
+            }],
+            columns: [
+                {field: "附件信息1"},
+                {field: "附件信息2"},
+                {field: "附件信息3"},
+                {field: "附件信息4"},
+                {field: "附件信息5"}
+            ],
+            dataSource: {
+                transport: {
+                    read: {
+                        url: "${base.contextPath}/demo?headerId=#= headerId #",
+                        type: "GET",
+                        dataType: "json"
+                    },
+                    create: {
+                        url: "${base.contextPath}/demo",
+                        contentType: "application/json",
+                        dataType: "json",
+                        type: "POST"
+                    },
+                    update: {
+                        url: "${base.contextPath}/demo",
+                        contentType: "application/json",
+                        dataType: "json",
+                        type: "PUT"
+                    },
+                    destroy: {
+                        url: "${base.contextPath}/demo",
+                        contentType: "application/json",
+                        dataType: "json",
+                        type: "DELETE"
+                    },
+                    parameterMap: function (options, type) {
+                        console.log(arguments);
+                        if (type == "read") {
+                            return options;
+                        } else {
+                            return JSON.stringify(options);
+                        }
+                    }
+                },
+                schema: {
+                    data: "rows",
+                    total: "total",
+                    model: {
+                        id: "id"
+                    }
+                },
+                serverPaging: true,
+                pageSize: 5
+            },
+            rownumber: true,
+            selectable: "multiple rowbox",
+            editable: true,
+            pageable: {
+                pageSizes: ['All', 5, 10, 20, 50],
+                refresh: true,
+                buttonCount: 5
+            }
+        });
+        $("#delete").click(function () {
+            Hap.deleteGridSelection({grid: $('#grid2')});
+        });
+    </script>
+    </body>
+    </html>

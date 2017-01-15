@@ -1,0 +1,319 @@
+<#include "include/header.html">
+    <body style="height: 700px">
+    <div id="block">
+        <input data-bind="value: data.name" value="" type="text" class="k-textbox">
+        <button data-bind="click: save" class="btn btn-primary" id="save">保存</button>
+    </div>
+    <script>
+        var viewModel = kendo.observable({
+            save: function () {
+                console.log(viewModel.data);
+            },
+            data : {}
+        });
+        kendo.bind($("#block"), viewModel);
+    </script>
+    <div id="grid" data-role="grid"></div>
+    <script>
+
+        var grid = {
+            toolbar: [{
+                name: "create",
+                template: '<span class="btn btn-primary k-grid-add">#=text#</span>'
+            }, {
+                name: "save",
+                template: '<span class="btn btn-success k-grid-save-changes">#=text#</span>'
+            }, {
+                name: "cancel",
+                template: '<span class="btn btn-default k-grid-cancel-changes">#=text#</span>'
+            },
+                {
+                    template: '<span id="delete" class="btn btn-danger">删除</span>'
+                }],
+                columns: [
+            {field: "name"},
+            {field: "tel"}
+        ],
+            dataSource: {
+            transport: {
+                read: function (options) {
+                    console.log(arguments);
+                    $.ajax({
+                        url: "${base.contextPath}/demo",
+                        type: "GET",
+                        dataType: "json",
+                        data: options.data,
+                        success: function (data) {
+                            // 扩展点
+                            options.success(data);
+                        }
+                    });
+                },
+                create: function (options) {
+                    console.log(arguments);
+                    $.ajax({
+                        url: "${base.contextPath}/demo",
+                        type: "POST",
+                        contentType: "application/json",
+                        dataType: "json",
+                        data: JSON.stringify(options.data),
+                        success: function (data) {
+                            if (data.success) {
+                                kendo.ui.showInfoDialog({
+                                    title: "新增",
+                                    width: 400,
+                                    message: '<@spring.message "demo.save_success"/>'
+                                });
+                            }
+                            options.success(data);
+                        }
+                    });
+                },
+                update: function (options) {
+                    $.ajax({
+                        url: "${base.contextPath}/demo",
+                        type: "PUT",
+                        contentType: "application/json",
+                        dataType: "json",
+                        data: JSON.stringify(options.data),
+                        success: function (data) {
+                            if (data.success) {
+                                kendo.ui.showInfoDialog({
+                                    title: "更新",
+                                    width: 400,
+                                    message: '更新成功'
+                                });
+                            }
+                            options.success(data);
+                        }
+                    });
+                },
+                destroy: function (options) {
+                    $.ajax({
+                        url: "${base.contextPath}/demo",
+                        type: "DELETE",
+                        contentType: "application/json",
+                        dataType: "json",
+                        data: JSON.stringify(options.data),
+                        success: function (data) {
+                            if (data.success) {
+                                kendo.ui.showInfoDialog({
+                                    title: "删除",
+                                    width: 400,
+                                    message: '删除成功'
+                                });
+                            }
+                            options.success(data);
+                        }
+                    });
+                },
+            }/*{
+             read: {
+             url: "${base.contextPath}/demo",
+             type: "GET",
+             dataType: "json"
+             },
+             create: {
+             url: "${base.contextPath}/demo",
+             contentType: "application/json",
+             dataType: "json",
+             type: "POST"
+             },
+             update: {
+             url: "${base.contextPath}/demo",
+             contentType: "application/json",
+             dataType: "json",
+             type: "PUT"
+             },
+             destroy: {
+             url: "${base.contextPath}/demo",
+             contentType: "application/json",
+             dataType: "json",
+             type: "DELETE"
+             },
+             parameterMap: function (options, type) {
+             console.log(arguments);
+             if (type == "read") {
+             return options;
+             } else {
+             return JSON.stringify(options);
+             }
+             }
+             }*/,
+            schema: {
+                data: 'rows',
+                    total: 'total',
+                    model: {
+                    id: "id"
+                }
+
+            },
+            serverPaging: true,
+                pageSize: 5
+        },
+            rownumber: true,
+                selectable: "multiple rowbox",
+            editable: 'true',
+            pageable: {
+            pageSizes: ['All', 5, 10, 20, 50],
+                refresh: true,
+                buttonCount: 5
+        }
+        }
+        kendo.bind($("#grid"),grid);
+
+        $("#grid").kendoGrid({
+            toolbar: [{
+                name: "create",
+                template: '<span class="btn btn-primary k-grid-add">#=text#</span>'
+            }, {
+                name: "save",
+                template: '<span class="btn btn-success k-grid-save-changes">#=text#</span>'
+            }, {
+                name: "cancel",
+                template: '<span class="btn btn-default k-grid-cancel-changes">#=text#</span>'
+            },
+                {
+                    template: '<span id="delete" class="btn btn-danger">删除</span>'
+                }],
+            columns: [
+                {field: "name"},
+                {field: "tel"}
+            ],
+            dataSource: {
+                transport: {
+                    read: function (options) {
+                        console.log(arguments);
+                        $.ajax({
+                            url: "${base.contextPath}/demo",
+                            type: "GET",
+                            dataType: "json",
+                            data: options.data,
+                            success: function (data) {
+                                // 扩展点
+                                options.success(data);
+                            }
+                        });
+                    },
+                    create: function (options) {
+                        console.log(arguments);
+                        $.ajax({
+                            url: "${base.contextPath}/demo",
+                            type: "POST",
+                            contentType: "application/json",
+                            dataType: "json",
+                            data: JSON.stringify(options.data),
+                            success: function (data) {
+                                if (data.success) {
+                                    kendo.ui.showInfoDialog({
+                                        title: "新增",
+                                        width: 400,
+                                        message: '<@spring.message "demo.save_success"/>'
+                                    });
+                                }
+                                options.success(data);
+                            }
+                        });
+                    },
+                    update: function (options) {
+                        $.ajax({
+                            url: "${base.contextPath}/demo",
+                            type: "PUT",
+                            contentType: "application/json",
+                            dataType: "json",
+                            data: JSON.stringify(options.data),
+                            success: function (data) {
+                                if (data.success) {
+                                    kendo.ui.showInfoDialog({
+                                        title: "更新",
+                                        width: 400,
+                                        message: '更新成功'
+                                    });
+                                }
+                                options.success(data);
+                            }
+                        });
+                    },
+                    destroy: function (options) {
+                        $.ajax({
+                            url: "${base.contextPath}/demo",
+                            type: "DELETE",
+                            contentType: "application/json",
+                            dataType: "json",
+                            data: JSON.stringify(options.data),
+                            success: function (data) {
+                                if (data.success) {
+                                    kendo.ui.showInfoDialog({
+                                        title: "删除",
+                                        width: 400,
+                                        message: '删除成功'
+                                    });
+                                }
+                                options.success(data);
+                            }
+                        });
+                    },
+                }/*{
+                 read: {
+                 url: "${base.contextPath}/demo",
+                 type: "GET",
+                 dataType: "json"
+                 },
+                 create: {
+                 url: "${base.contextPath}/demo",
+                 contentType: "application/json",
+                 dataType: "json",
+                 type: "POST"
+                 },
+                 update: {
+                 url: "${base.contextPath}/demo",
+                 contentType: "application/json",
+                 dataType: "json",
+                 type: "PUT"
+                 },
+                 destroy: {
+                 url: "${base.contextPath}/demo",
+                 contentType: "application/json",
+                 dataType: "json",
+                 type: "DELETE"
+                 },
+                 parameterMap: function (options, type) {
+                 console.log(arguments);
+                 if (type == "read") {
+                 return options;
+                 } else {
+                 return JSON.stringify(options);
+                 }
+                 }
+                 }*/,
+                schema: {
+                    data: 'rows',
+                    total: 'total',
+                    model: {
+                        id: "id"
+                    }
+
+                },
+                serverPaging: true,
+                pageSize: 5
+            },
+            rownumber: true,
+            selectable: "multiple rowbox",
+            editable: 'true',
+            pageable: {
+                pageSizes: ['All', 5, 10, 20, 50],
+                refresh: true,
+                buttonCount: 5
+            }
+        });
+        $("#delete").click(function () {
+            Hap.deleteGridSelection({grid: $('#grid')});
+        });
+        $("#save").click(function () {
+                console.log($("#grid").data("kendoGrid"));
+                $("#grid").data("kendoGrid").saveChanges();
+            }
+        )
+    </script>
+    </body>
+    </html>
