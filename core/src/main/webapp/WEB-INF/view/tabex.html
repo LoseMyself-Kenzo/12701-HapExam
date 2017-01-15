@@ -107,39 +107,7 @@
                         }
                     });
                 },
-            }/*{
-             read: {
-             url: "${base.contextPath}/demo",
-             type: "GET",
-             dataType: "json"
-             },
-             create: {
-             url: "${base.contextPath}/demo",
-             contentType: "application/json",
-             dataType: "json",
-             type: "POST"
-             },
-             update: {
-             url: "${base.contextPath}/demo",
-             contentType: "application/json",
-             dataType: "json",
-             type: "PUT"
-             },
-             destroy: {
-             url: "${base.contextPath}/demo",
-             contentType: "application/json",
-             dataType: "json",
-             type: "DELETE"
-             },
-             parameterMap: function (options, type) {
-             console.log(arguments);
-             if (type == "read") {
-             return options;
-             } else {
-             return JSON.stringify(options);
-             }
-             }
-             }*/,
+            },
             schema: {
                 data: 'rows',
                     total: 'total',
@@ -162,6 +130,13 @@
         }
         kendo.bind($("#grid"),grid);
 
+
+
+
+
+
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------
         $("#grid").kendoGrid({
             toolbar: [{
                 name: "create",
@@ -253,39 +228,7 @@
                             }
                         });
                     },
-                }/*{
-                 read: {
-                 url: "${base.contextPath}/demo",
-                 type: "GET",
-                 dataType: "json"
-                 },
-                 create: {
-                 url: "${base.contextPath}/demo",
-                 contentType: "application/json",
-                 dataType: "json",
-                 type: "POST"
-                 },
-                 update: {
-                 url: "${base.contextPath}/demo",
-                 contentType: "application/json",
-                 dataType: "json",
-                 type: "PUT"
-                 },
-                 destroy: {
-                 url: "${base.contextPath}/demo",
-                 contentType: "application/json",
-                 dataType: "json",
-                 type: "DELETE"
-                 },
-                 parameterMap: function (options, type) {
-                 console.log(arguments);
-                 if (type == "read") {
-                 return options;
-                 } else {
-                 return JSON.stringify(options);
-                 }
-                 }
-                 }*/,
+                },
                 schema: {
                     data: 'rows',
                     total: 'total',

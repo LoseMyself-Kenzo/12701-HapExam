@@ -32,7 +32,7 @@ public class DemoController extends BaseController {
     @Autowired
     private OrderLineService orderLineService;
 
-    @RequestMapping(method = RequestMethod.POST)
+    @RequestMapping(value = "/create",method = RequestMethod.POST)
     public ResponseData insert(@RequestBody Demo demo, HttpServletRequest request) {
         ResponseData responseDate = new ResponseData();
         IRequest requestContext = this.createRequestContext(request);
@@ -41,7 +41,7 @@ public class DemoController extends BaseController {
         return responseDate;
     }
 
-    @RequestMapping(path = "/{id}", method = RequestMethod.PUT)
+    @RequestMapping(value = "/update",method = RequestMethod.POST)
     public ResponseData update(@RequestBody Demo demo, HttpServletRequest request) {
         ResponseData responseData = new ResponseData();
         IRequest requestContext = this.createRequestContext(request);
@@ -50,15 +50,15 @@ public class DemoController extends BaseController {
         return responseData;
     }
 
-    @RequestMapping(path = "/{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/delete",method = RequestMethod.POST)
     public ResponseData delete(@RequestBody InventoryVo inventoryVo, HttpServletRequest request) {
         ResponseData responseData = new ResponseData();
         orderLineService.myDelete(inventoryVo);
         responseData.setMessage(String.format("Primary Key: %d", inventoryVo.getOrderLines().getHeaderId()));
         return responseData;
     }
-
-    @RequestMapping(method = RequestMethod.GET)
+    // ..../demo/create
+    @RequestMapping(value ="/read",method = RequestMethod.GET)
     public ResponseData select(HttpServletRequest request,
                                @RequestParam(name = "headerId", required = false, defaultValue = "") Long header_id,
                                @RequestParam(name = "orderNumber", required = false, defaultValue = "") String order_number,

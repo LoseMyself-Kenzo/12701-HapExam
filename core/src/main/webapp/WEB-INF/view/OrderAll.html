@@ -27,14 +27,14 @@
                 公司名称&nbsp;<input id="companylov"/>&nbsp;&nbsp;&nbsp;
                 客户名称&nbsp;<input id="customerlov"/>
                 <script>
-                    $("#companylov").kendoLov($.extend(${lovProvider.getLov(base.contextPath, base.locale, "emp_lov")},{}
+                    $("#companylov").kendoLov($.extend(${lovProvider.getLov(base.contextPath, base.locale, "emp_lov")}, {}
                     ));
-//                    kendo.bind($('#companylov'), viewModel);
+                    //                    kendo.bind($('#companylov'), viewModel);
                 </script>
                 <script>
-                    $("#customerlov").kendoLov($.extend(${lovProvider.getLov(base.contextPath, base.locale, "customer_lov")},{}
+                    $("#customerlov").kendoLov($.extend(${lovProvider.getLov(base.contextPath, base.locale, "customer_lov")}, {}
                     ));
-//                    kendo.bind($('#customerlov'), viewModel);
+                    //                    kendo.bind($('#customerlov'), viewModel);
                 </script>
             </div>
             <div style="margin-top: 5px">
@@ -94,9 +94,9 @@
     <script>
 
         //跳转指定查询-------------------------------------------------------
-        var localHref=location.href;
-        var SURL ="${base.contextPath}/order/select?headerId=";
-        if(localHref.indexOf("=") != -1){
+        var localHref = location.href;
+        var SURL = "${base.contextPath}/order/select?headerId=";
+        if (localHref.indexOf("=") != -1) {
             SURL = SURL + localHref.substring(localHref.indexOf("=") + 1);
         }
         //删除指定信息--------------------------------------------------
@@ -125,27 +125,21 @@
             dataSource: {
                 transport: {
                     read: {
-                        url: SURL ,
+                        url: SURL,
                         type: "GET",
                         dataType: "json"
                     },
                     create: {
-                        url: "${base.contextPath}/demo",
+                        url: "${base.contextPath}/demo/create",
                         contentType: "application/json",
                         dataType: "json",
                         type: "POST"
                     },
                     update: {
-                        url: "${base.contextPath}/demo",
+                        url: "${base.contextPath}/demo/update",
                         contentType: "application/json",
                         dataType: "json",
-                        type: "PUT"
-                    },
-                    destroy: {
-                        url: "${base.contextPath}/demo",
-                        contentType: "application/json",
-                        dataType: "json",
-                        type: "DELETE"
+                        type: "POST"
                     },
                     parameterMap: function (options, type) {
                         console.log(arguments);
@@ -162,13 +156,13 @@
                     model: {
                         id: "id",
                         fields: {
-                            "orderLines.lineId":{editable: false},
-                            itemCode:{validation: {required: true}},
+                            "orderLines.lineId": {editable: false},
+                            itemCode: {validation: {required: true}},
                             itemDescription: {editable: false},
                             itemUom: {editable: false},
                             "orderLines.orderdQuantity": {validation: {required: true}},
                             "orderLines.unitSellingPrice": {validation: {required: true}},
-                            money:{editable: false},
+                            money: {editable: false},
                         }
                     }
                 },
@@ -185,7 +179,33 @@
             }
         });
         $("#delete").click(function () {
-            Hap.deleteGridSelection({grid: $('#grid1')});
+//            Hap.deleteGridSelection({grid: $('#grid1')});
+            var grid = $("#grid1").data("kendoGrid");
+            var checked = grid.selectedDataItems();
+            if (grid.selectedDataItems().length) {
+                kendo.ui.showConfirmDialog({
+                    title: $l('hap.tip.info'),
+                    message: $l('hap.tip.delete_confirm')
+                }).done(function (event) {
+                    if (event.button == 'OK') {
+                        $.each(checked, function (i, v) {
+                            grid.dataSource.remove(v);
+                            console.log(v);
+                            $.ajax({
+//                                url: "${base.contextPath}/demo",
+                                url: '${base.contextPath}/demo/delete',
+                                type: "POST",
+                                contentType: "application/json",
+                                data: JSON.stringify(v),
+                                success: function (data) {
+                                    console.log("success");
+                                }
+                            });
+                        })
+//                        grid.dataSource.sync();
+                    }
+                })
+            }
         });
     </script>
 
